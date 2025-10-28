@@ -26,12 +26,7 @@ if ! git rev-parse --git-dir > /dev/null 2>&1; then
 fi
 
 # Get real-time cognitive state from database
-# Find parent Claude process
-CLAUDE_PID=$(ps -o ppid= $$ | xargs ps -o ppid= | xargs)
-if [ -z "$CLAUDE_PID" ]; then
-    CLAUDE_PID=$(pgrep -f "claude" | head -1)
-fi
-COGNITIVE_STATE=$(get-cognitive-state "$CLAUDE_PID" 2>/dev/null || echo "Active")
+COGNITIVE_STATE=$(get-cognitive-state 2>/dev/null || echo "Active")
 
 # Generate the 4th-dimensional timestamp using chronos-stamp
 CHRONOS_OUTPUT=$("$CHRONOS_STAMP" "$AGENT_ID" "tool-completion" 2>&1 | grep '\[CHRONOS\]' | sed 's/^[[:space:]]*//' || echo "")
@@ -41,8 +36,7 @@ if [ -z "$CHRONOS_OUTPUT" ]; then
     COMMIT_MSG="[FALLBACK] $(date -u +%Y-%m-%dT%H:%M:%S.%NZ)::$AGENT_ID::$COGNITIVE_STATE::tool-completion"
 else
     # Inject cognitive state into CHRONOS output
-    # Replace empty cognitive state field (::::TICK) with actual state
-    COMMIT_MSG=$(echo "$CHRONOS_OUTPUT" | sed "s/::::TICK/::${COGNITIVE_STATE}::TICK/")
+    COMMIT_MSG=$(echo "$CHRONOS_OUTPUT" | sed "s/::${AGENT_ID}::TICK/::${AGENT_ID}::${COGNITIVE_STATE}::TICK/")
 fi
 
 # Append tool description if available
@@ -62,4 +56,3 @@ fi
 git commit -m "$COMMIT_MSG" 2>/dev/null
 
 exit 0
-

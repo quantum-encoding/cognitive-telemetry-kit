@@ -41,8 +41,7 @@ if [ -z "$CHRONOS_OUTPUT" ]; then
     COMMIT_MSG="[FALLBACK] $(date -u +%Y-%m-%dT%H:%M:%S.%NZ)::$AGENT_ID::$COGNITIVE_STATE::tool-completion"
 else
     # Inject cognitive state into CHRONOS output
-    # Replace empty cognitive state field (::::TICK) with actual state
-    COMMIT_MSG=$(echo "$CHRONOS_OUTPUT" | sed "s/::::TICK/::${COGNITIVE_STATE}::TICK/")
+    COMMIT_MSG=$(echo "$CHRONOS_OUTPUT" | sed "s/::${AGENT_ID}::TICK/::${AGENT_ID}::${COGNITIVE_STATE}::TICK/")
 fi
 
 # Append tool description if available
