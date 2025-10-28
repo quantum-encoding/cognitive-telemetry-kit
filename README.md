@@ -112,29 +112,50 @@ sqlite3 /var/lib/cognitive-watcher/cognitive-states.db \
 
 ---
 
-## Git Hook Setup
+## Claude Code Hook Setup
 
-To automatically capture cognitive states in git commits:
+To automatically capture cognitive states in **all git commits** made by Claude Code:
 
-### Option 1: Claude Code Hook (Recommended)
+### Quick Install (All Repositories)
 
-Create `.claude/hooks/tool-result-hook.sh` in your project:
-
-```bash
-#!/bin/bash
-# Capture cognitive state after every tool completion
-chronos-stamp claude-code tool-result "$TOOL_NAME" >> /tmp/claude-chronos.log
-```
-
-### Option 2: Manual Git Hook
-
-Add to `.git/hooks/pre-commit`:
+Install the hook in all your git repositories at once:
 
 ```bash
-#!/bin/bash
-COGNITIVE_STATE=$(get-cognitive-state $(pgrep -f claude))
-echo "[COGNITIVE: $COGNITIVE_STATE]" >> .git/COMMIT_EDITMSG
+cd cognitive-telemetry-kit
+./scripts/install-hooks-all.sh
 ```
+
+This will:
+- Find all git repositories in your home directory
+- Install `.claude/hooks/tool-result-hook.sh` in each one
+- Enable automatic cognitive telemetry for all Claude Code sessions
+
+### Per-Project Install
+
+For a single project:
+
+```bash
+mkdir -p .claude/hooks
+cp examples/claude-hooks/tool-result-hook.sh .claude/hooks/
+chmod +x .claude/hooks/tool-result-hook.sh
+```
+
+### What You Get
+
+Every tool execution by Claude Code automatically creates a commit like:
+
+```
+[CHRONOS] 2025-10-28T11:12:09.910123620Z::claude-code::Verifying git commits::TICK-0000011391::[/home/user/project]::[/home/user/project] → tool-completion - Write file: src/main.rs
+```
+
+This includes:
+- **Nanosecond-precision timestamp**
+- **Real-time cognitive state** (e.g., "Verifying git commits", "Pondering", "Channelling")
+- **Tool description** (what action was performed)
+- **Working directory** (where it happened)
+- **Unique tick ID** (for event ordering)
+
+See `examples/claude-hooks/README.md` for advanced configuration and troubleshooting.
 
 ---
 
