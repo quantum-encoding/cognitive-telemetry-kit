@@ -143,16 +143,17 @@ echo "[COGNITIVE: $COGNITIVE_STATE]" >> .git/COMMIT_EDITMSG
 Claude's status line contains cognitive state in this format:
 
 ```
-> [COGNITIVE STATE] (esc to interrupt  ctrl+t to show todos)
 * [COGNITIVE STATE] (esc to interrupt  ctrl+t to show todos)
 ```
 
-We extract the text between the marker (`>` or `*`) and `(esc to interrupt` - this is the cognitive state.
+Note: `>` prefix indicates user input in the terminal, not Claude's status line. Only `*` marks Claude's cognitive state.
+
+We extract the text between `*` and `(` - this is the cognitive state.
 
 **Examples:**
-- `> Verifying git commits (esc...` → **"Verifying git commits"**
+- `* Verifying git commits (esc...` → **"Verifying git commits"**
 - `* Thinking (esc...` → **"Thinking"**
-- `> Julienning (esc...` → **"Julienning"**
+- `* Julienning (esc...` → **"Julienning"**
 
 **No keyword lists. No fragile filtering. Just the universal pattern.**
 
