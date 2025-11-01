@@ -159,20 +159,20 @@ pub const DBusServer = struct {
         var json_buf = std.ArrayList(u8).empty;
         defer json_buf.deinit(self.allocator);
 
-        try json_buf.appendSlice("[");
+        try json_buf.appendSlice(self.allocator, "[");
         for (recent, 0..) |state, i| {
-            if (i > 0) try json_buf.appendSlice(",");
+            if (i > 0) try json_buf.appendSlice(self.allocator, ",");
 
-            try json_buf.appendSlice("{\"pid\":");
+            try json_buf.appendSlice(self.allocator, "{\"pid\":");
             var num_buf: [20]u8 = undefined;
             const num_str = try std.fmt.bufPrint(&num_buf, "{d}", .{state.pid});
-            try json_buf.appendSlice(num_str);
+            try json_buf.appendSlice(self.allocator, num_str);
 
-            try json_buf.appendSlice(",\"state\":\"");
-            try json_buf.appendSlice(state.state_type);
-            try json_buf.appendSlice("\"}");
+            try json_buf.appendSlice(self.allocator, ",\"state\":\"");
+            try json_buf.appendSlice(self.allocator, state.state_type);
+            try json_buf.appendSlice(self.allocator, "\"}");
         }
-        try json_buf.appendSlice("]");
+        try json_buf.appendSlice(self.allocator, "]");
 
         const json_cstr = try self.allocator.dupeZ(u8, json_buf.items);
         defer self.allocator.free(json_cstr);
@@ -192,19 +192,19 @@ pub const DBusServer = struct {
         var json_buf = std.ArrayList(u8).init(self.allocator);
         defer json_buf.deinit();
 
-        try json_buf.appendSlice("[");
+        try json_buf.appendSlice(self.allocator, "[");
 
         var it = self.cache.states_by_pid.keyIterator();
         var first = true;
         while (it.next()) |pid| {
-            if (!first) try json_buf.appendSlice(",");
+            if (!first) try json_buf.appendSlice(self.allocator, ",");
             first = false;
 
             var num_buf: [20]u8 = undefined;
             const num_str = try std.fmt.bufPrint(&num_buf, "{d}", .{pid.*});
-            try json_buf.appendSlice(num_str);
+            try json_buf.appendSlice(self.allocator, num_str);
         }
-        try json_buf.appendSlice("]");
+        try json_buf.appendSlice(self.allocator, "]");
 
         const json_cstr = try self.allocator.dupeZ(u8, json_buf.items);
         defer self.allocator.free(json_cstr);
