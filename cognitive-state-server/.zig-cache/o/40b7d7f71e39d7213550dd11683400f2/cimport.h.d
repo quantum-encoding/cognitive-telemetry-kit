@@ -1,0 +1,21 @@
+.zig-cache/tmp/2bc6374e643ef638/cimport.zig: \
+  /usr/include/dbus-1.0/dbus/dbus.h \
+  /usr/lib/dbus-1.0/include/dbus/dbus-arch-deps.h \
+  /usr/include/dbus-1.0/dbus/dbus-macros.h \
+  /usr/include/dbus-1.0/dbus/dbus-address.h \
+  /usr/include/dbus-1.0/dbus/dbus-types.h \
+  /usr/local/zig/lib/compiler/aro/include/stddef.h \
+  /usr/include/dbus-1.0/dbus/dbus-errors.h \
+  /usr/include/dbus-1.0/dbus/dbus-protocol.h \
+  /usr/include/dbus-1.0/dbus/dbus-bus.h \
+  /usr/include/dbus-1.0/dbus/dbus-connection.h \
+  /usr/include/dbus-1.0/dbus/dbus-memory.h \
+  /usr/include/dbus-1.0/dbus/dbus-message.h \
+  /usr/local/zig/lib/compiler/aro/include/stdarg.h \
+  /usr/include/dbus-1.0/dbus/dbus-shared.h \
+  /usr/include/dbus-1.0/dbus/dbus-misc.h \
+  /usr/include/dbus-1.0/dbus/dbus-pending-call.h \
+  /usr/include/dbus-1.0/dbus/dbus-server.h \
+  /usr/include/dbus-1.0/dbus/dbus-signature.h \
+  /usr/include/dbus-1.0/dbus/dbus-syntax.h \
+  /usr/include/dbus-1.0/dbus/dbus-threads.h
