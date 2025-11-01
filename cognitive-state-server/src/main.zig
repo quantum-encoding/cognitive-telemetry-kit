@@ -53,7 +53,7 @@ const StateCache = struct {
         for (self.recent_states.items) |*state| {
             state.deinit(self.allocator);
         }
-        self.recent_states.deinit();
+        self.recent_states.deinit(self.allocator);
     }
 
     pub fn updateState(self: *StateCache, state: CognitiveState) !void {
