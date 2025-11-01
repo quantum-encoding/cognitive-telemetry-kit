@@ -18,6 +18,16 @@ const CognitiveState = struct {
         if (self.tool_name) |name| allocator.free(name);
         if (self.status) |s| allocator.free(s);
     }
+
+    pub fn clone(self: *const CognitiveState, allocator: std.mem.Allocator) !CognitiveState {
+        return CognitiveState{
+            .timestamp = try allocator.dupe(u8, self.timestamp),
+            .state_type = try allocator.dupe(u8, self.state_type),
+            .tool_name = if (self.tool_name) |name| try allocator.dupe(u8, name) else null,
+            .status = if (self.status) |s| try allocator.dupe(u8, s) else null,
+            .pid = self.pid,
+        };
+    }
 };
 
 const StateCache = struct {
