@@ -86,7 +86,7 @@ pub const DBusServer = struct {
             defer self.allocator.free(state_cstr);
 
             const ptr: [*c]const u8 = state_cstr.ptr;
-            _ = c.dbus_message_iter_append_basic(&iter, c.DBUS_TYPE_STRING, &ptr);
+            _ = c.dbus_message_iter_append_basic(&iter, c.DBUS_TYPE_STRING, @ptrCast(&ptr));
         } else {
             // Return "Unknown" if no states
             const unknown = "Unknown";
