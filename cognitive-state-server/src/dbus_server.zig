@@ -129,7 +129,7 @@ pub const DBusServer = struct {
 
             const unknown = "Unknown";
             const ptr: [*c]const u8 = unknown.ptr;
-            _ = c.dbus_message_iter_append_basic(&reply_iter, c.DBUS_TYPE_STRING, &ptr);
+            _ = c.dbus_message_iter_append_basic(&reply_iter, c.DBUS_TYPE_STRING, @ptrCast(&ptr));
         }
 
         _ = c.dbus_connection_send(self.conn, reply, null);
@@ -178,7 +178,7 @@ pub const DBusServer = struct {
         defer self.allocator.free(json_cstr);
 
         const ptr: [*c]const u8 = json_cstr.ptr;
-        _ = c.dbus_message_iter_append_basic(&reply_iter, c.DBUS_TYPE_STRING, &ptr);
+        _ = c.dbus_message_iter_append_basic(&reply_iter, c.DBUS_TYPE_STRING, @ptrCast(&ptr));
 
         _ = c.dbus_connection_send(self.conn, reply, null);
         c.dbus_connection_flush(self.conn);
@@ -213,7 +213,7 @@ pub const DBusServer = struct {
         c.dbus_message_iter_init_append(reply, &reply_iter);
 
         const ptr: [*c]const u8 = json_cstr.ptr;
-        _ = c.dbus_message_iter_append_basic(&reply_iter, c.DBUS_TYPE_STRING, &ptr);
+        _ = c.dbus_message_iter_append_basic(&reply_iter, c.DBUS_TYPE_STRING, @ptrCast(&ptr));
 
         _ = c.dbus_connection_send(self.conn, reply, null);
         c.dbus_connection_flush(self.conn);
