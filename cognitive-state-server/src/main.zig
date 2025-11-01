@@ -30,7 +30,7 @@ const CognitiveState = struct {
     }
 };
 
-const StateCache = struct {
+pub const StateCache = struct {
     allocator: std.mem.Allocator,
     // Map from PID to latest cognitive state
     states_by_pid: std.AutoHashMap(u32, CognitiveState),
