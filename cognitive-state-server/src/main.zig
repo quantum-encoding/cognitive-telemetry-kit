@@ -107,13 +107,21 @@ const DB_PATH = "/var/lib/cognitive-watcher/cognitive-states.db";
 fn queryCognitiveStates(allocator: std.mem.Allocator, cache: *StateCache) !void {
     var db: ?*c.sqlite3 = null;
 
-    // Open database
-    const rc = c.sqlite3_open(DB_PATH, &db);
+    // Open database in read-only mode with shared cache
+    const rc = c.sqlite3_open_v2(
+        DB_PATH,
+        &db,
+        c.SQLITE_OPEN_READONLY | c.SQLITE_OPEN_SHAREDCACHE,
+        null,
+    );
     if (rc != c.SQLITE_OK) {
         std.debug.print("Failed to open database: {d}\n", .{rc});
         return error.DatabaseOpenFailed;
     }
     defer _ = c.sqlite3_close(db);
+
+    // Set busy timeout to 1 second
+    _ = c.sqlite3_busy_timeout(db, 1000);
 
     // Query recent cognitive states
     const query =
