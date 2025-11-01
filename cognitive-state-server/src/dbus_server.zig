@@ -156,8 +156,8 @@ pub const DBusServer = struct {
         c.dbus_message_iter_init_append(reply, &reply_iter);
 
         // Build JSON array string
-        var json_buf = std.ArrayList(u8).init(self.allocator);
-        defer json_buf.deinit();
+        var json_buf = std.ArrayList(u8).empty;
+        defer json_buf.deinit(self.allocator);
 
         try json_buf.appendSlice("[");
         for (recent, 0..) |state, i| {
