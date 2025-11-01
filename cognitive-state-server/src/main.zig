@@ -33,11 +33,7 @@ const StateCache = struct {
         return .{
             .allocator = allocator,
             .states_by_pid = std.AutoHashMap(u32, CognitiveState).init(allocator),
-            .recent_states = std.ArrayList(CognitiveState){
-                .items = &[_]CognitiveState{},
-                .capacity = 0,
-                .allocator = allocator,
-            },
+            .recent_states = std.ArrayList(CognitiveState).empty,
             .max_recent = 100,
             .mutex = .{},
         };
