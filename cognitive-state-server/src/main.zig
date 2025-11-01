@@ -72,7 +72,7 @@ const StateCache = struct {
         try self.states_by_pid.put(state.pid, state);
 
         // Add to recent states ring buffer
-        try self.recent_states.append(state);
+        try self.recent_states.append(self.allocator, state);
         if (self.recent_states.items.len > self.max_recent) {
             var removed = self.recent_states.orderedRemove(0);
             removed.deinit(self.allocator);
