@@ -171,14 +171,18 @@ fn queryCognitiveStates(allocator: std.mem.Allocator, cache: *StateCache) !void 
     // Fetch results
     while (c.sqlite3_step(stmt) == c.SQLITE_ROW) {
         const timestamp = c.sqlite3_column_text(stmt, 0);
-        const state_type = c.sqlite3_column_text(stmt, 1);
+        const raw_content = c.sqlite3_column_text(stmt, 1);
         const tool_name = c.sqlite3_column_text(stmt, 2);
         const status = c.sqlite3_column_text(stmt, 3);
         const pid = c.sqlite3_column_int(stmt, 4);
 
+        // Extract actual cognitive state from raw_content (text between * and ()
+        const raw_content_str = std.mem.span(raw_content);
+        const extracted_state = try extractCognitiveState(allocator, raw_content_str);
+
         const state = CognitiveState{
             .timestamp = try allocator.dupe(u8, std.mem.span(timestamp)),
-            .state_type = try allocator.dupe(u8, std.mem.span(state_type)),
+            .state_type = extracted_state,
             .tool_name = if (c.sqlite3_column_type(stmt, 2) != c.SQLITE_NULL)
                 try allocator.dupe(u8, std.mem.span(tool_name))
             else
