@@ -122,7 +122,7 @@ pub const DBusServer = struct {
             defer self.allocator.free(state_cstr);
 
             const ptr: [*c]const u8 = state_cstr.ptr;
-            _ = c.dbus_message_iter_append_basic(&reply_iter, c.DBUS_TYPE_STRING, &ptr);
+            _ = c.dbus_message_iter_append_basic(&reply_iter, c.DBUS_TYPE_STRING, @ptrCast(&ptr));
         } else {
             var reply_iter: c.DBusMessageIter = undefined;
             c.dbus_message_iter_init_append(reply, &reply_iter);
