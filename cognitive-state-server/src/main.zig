@@ -183,7 +183,7 @@ fn watchDatabaseChanges(allocator: std.mem.Allocator, cache: *StateCache) !void 
         }
 
         // Sleep briefly to avoid busy-waiting
-        std.time.sleep(100 * std.time.ns_per_ms);
+        std.Thread.sleep(100 * std.time.ns_per_ms);
     }
 }
 
