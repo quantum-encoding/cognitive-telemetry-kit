@@ -15,18 +15,11 @@ pub const DBusServer = struct {
     const INTERFACE_NAME = "org.jesternet.CognitiveOracle";
 
     pub fn init(allocator: std.mem.Allocator, cache: *StateCache) !DBusServer {
-        var err: c.DBusError = undefined;
-        c.dbus_error_init(&err);
-        defer c.dbus_error_free(&err);
-
-        // Connect to session bus
-        const conn = c.dbus_bus_get(c.DBUS_BUS_SESSION, &err);
-        if (c.dbus_error_is_set(&err) != 0) {
-            std.debug.print("[D-Bus] Connection error: {s}\n", .{err.message});
-            return error.DBusConnectionFailed;
-        }
+        // Connect to session bus (pass NULL for error - we'll check the connection)
+        const conn = c.dbus_bus_get(c.DBUS_BUS_SESSION, null);
 
         if (conn == null) {
+            std.debug.print("[D-Bus] Failed to connect to session bus\n", .{});
             return error.DBusConnectionFailed;
         }
 
@@ -35,13 +28,8 @@ pub const DBusServer = struct {
             conn,
             SERVICE_NAME,
             c.DBUS_NAME_FLAG_REPLACE_EXISTING,
-            &err,
+            null,
         );
-
-        if (c.dbus_error_is_set(&err) != 0) {
-            std.debug.print("[D-Bus] Request name error: {s}\n", .{err.message});
-            return error.DBusRequestNameFailed;
-        }
 
         if (name_result != c.DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER) {
             std.debug.print("[D-Bus] Not primary owner: {d}\n", .{name_result});
