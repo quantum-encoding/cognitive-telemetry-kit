@@ -189,8 +189,8 @@ pub const DBusServer = struct {
         defer c.dbus_message_unref(reply);
 
         // Build JSON array of all PIDs
-        var json_buf = std.ArrayList(u8).init(self.allocator);
-        defer json_buf.deinit();
+        var json_buf = std.ArrayList(u8).empty;
+        defer json_buf.deinit(self.allocator);
 
         try json_buf.appendSlice(self.allocator, "[");
 
