@@ -93,7 +93,7 @@ pub const DBusServer = struct {
             const ptr: [*c]const u8 = unknown.ptr;
             var iter: c.DBusMessageIter = undefined;
             c.dbus_message_iter_init_append(reply, &iter);
-            _ = c.dbus_message_iter_append_basic(&iter, c.DBUS_TYPE_STRING, &ptr);
+            _ = c.dbus_message_iter_append_basic(&iter, c.DBUS_TYPE_STRING, @ptrCast(&ptr));
         }
 
         _ = c.dbus_connection_send(self.conn, reply, null);
