@@ -50,9 +50,7 @@ const StateCache = struct {
         }
         self.states_by_pid.deinit();
 
-        for (self.recent_states.items) |*state| {
-            state.deinit(self.allocator);
-        }
+        // Don't free recent_states items - they're just references to HashMap values
         self.recent_states.deinit(self.allocator);
     }
 
