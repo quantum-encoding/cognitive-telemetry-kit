@@ -104,6 +104,30 @@ pub const StateCache = struct {
 
 const DB_PATH = "/var/lib/cognitive-watcher/cognitive-states.db";
 
+// Extract cognitive state from raw_content (text between * and ()
+fn extractCognitiveState(allocator: std.mem.Allocator, raw_content: []const u8) ![]const u8 {
+    // Find the * character
+    const star_pos = std.mem.indexOf(u8, raw_content, "*") orelse return allocator.dupe(u8, "Unknown");
+
+    // Find the ( character after the *
+    const paren_pos = std.mem.indexOf(u8, raw_content[star_pos..], "(") orelse return allocator.dupe(u8, "Unknown");
+
+    // Extract text between * and (
+    const start = star_pos + 1; // Skip the *
+    const end = star_pos + paren_pos;
+
+    if (start >= end) return allocator.dupe(u8, "Unknown");
+
+    const state_raw = raw_content[start..end];
+
+    // Trim whitespace
+    const state_trimmed = std.mem.trim(u8, state_raw, " \t\n\r");
+
+    if (state_trimmed.len == 0) return allocator.dupe(u8, "Unknown");
+
+    return allocator.dupe(u8, state_trimmed);
+}
+
 fn queryCognitiveStates(allocator: std.mem.Allocator, cache: *StateCache) !void {
     var db: ?*c.sqlite3 = null;
 
