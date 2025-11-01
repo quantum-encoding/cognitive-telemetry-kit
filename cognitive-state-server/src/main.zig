@@ -123,11 +123,15 @@ fn queryCognitiveStates(allocator: std.mem.Allocator, cache: *StateCache) !void 
     // Set busy timeout to 1 second
     _ = c.sqlite3_busy_timeout(db, 1000);
 
-    // Query recent cognitive states
+    // Query recent cognitive states - get raw_content to extract actual state
     const query =
-        \\SELECT timestamp_human, state_type, tool_name, status, pid
+        \\SELECT timestamp_human, raw_content, tool_name, status, pid
         \\FROM cognitive_states
         \\WHERE raw_content LIKE '%esc to interrupt%'
+        \\  AND raw_content NOT LIKE '%Bash(%'
+        \\  AND raw_content NOT LIKE '%Read(%'
+        \\  AND raw_content NOT LIKE '%Write(%'
+        \\  AND raw_content NOT LIKE '%Edit(%'
         \\ORDER BY id DESC
         \\LIMIT 50
     ;
