@@ -206,6 +206,8 @@ fn watchDatabaseChanges(allocator: std.mem.Allocator, cache: *StateCache) !void 
     }
 }
 
+const DBusServer = @import("dbus_server.zig").DBusServer;
+
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
@@ -222,7 +224,33 @@ pub fn main() !void {
     try queryCognitiveStates(allocator, &cache);
     std.debug.print("[Oracle] Loaded {d} unique PIDs\n", .{cache.states_by_pid.count()});
 
-    // Start database watcher
+    // Initialize D-Bus server
+    std.debug.print("[Oracle] Starting D-Bus server...\n", .{});
+    var dbus_server = try DBusServer.init(allocator, &cache);
+    defer dbus_server.deinit();
+
+    // Start database watcher in separate thread
     std.debug.print("[Oracle] Starting inotify watcher...\n", .{});
-    try watchDatabaseChanges(allocator, &cache);
+    const WatcherContext = struct {
+        allocator: std.mem.Allocator,
+        cache: *StateCache,
+    };
+    const ctx = WatcherContext{
+        .allocator = allocator,
+        .cache = &cache,
+    };
+
+    const watcher_thread = try std.Thread.spawn(.{}, struct {
+        fn run(context: WatcherContext) !void {
+            try watchDatabaseChanges(context.allocator, context.cache);
+        }
+    }.run, .{ctx});
+    defer watcher_thread.join();
+
+    // Main event loop - process D-Bus messages
+    std.debug.print("[Oracle] Oracle is online. Listening for queries...\n", .{});
+    while (true) {
+        try dbus_server.processMessages();
+        std.Thread.sleep(10 * std.time.ns_per_ms); // 10ms sleep to avoid busy-waiting
+    }
 }
