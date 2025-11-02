@@ -19,10 +19,8 @@ ProtectHome=read-only
 # Allow access to cognitive watcher database
 ReadOnlyPaths=/var/lib/cognitive-watcher
 
-# Performance
-Nice=-10
-IOSchedulingClass=realtime
-IOSchedulingPriority=0
+# Performance - lightweight process
+Nice=-5
 
 [Install]
 WantedBy=default.target
