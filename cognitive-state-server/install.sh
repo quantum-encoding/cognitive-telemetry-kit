@@ -18,10 +18,17 @@ if [ ! -f "$BINARY" ]; then
     exit 1
 fi
 
-# Install binary
-echo "[1/4] Installing binary to /usr/local/bin..."
-sudo cp "$BINARY" /usr/local/bin/cognitive-state-server
-sudo chmod +x /usr/local/bin/cognitive-state-server
+# Install binary to user's local bin
+echo "[1/4] Installing binary to ~/.local/bin..."
+mkdir -p ~/.local/bin
+cp "$BINARY" ~/.local/bin/cognitive-state-server
+chmod +x ~/.local/bin/cognitive-state-server
+
+# Make sure ~/.local/bin is in PATH
+if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+    echo "⚠️  Note: ~/.local/bin is not in your PATH"
+    echo "   Add 'export PATH=\"\$HOME/.local/bin:\$PATH\"' to your ~/.bashrc or ~/.zshrc"
+fi
 
 # Install systemd user service
 echo "[2/4] Installing systemd user service..."
