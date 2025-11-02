@@ -10,9 +10,6 @@ ExecStart=%h/.local/bin/cognitive-state-server
 Restart=always
 RestartSec=5
 
-# Run as the user (since it needs session D-Bus)
-User=%i
-
 # Security hardening
 NoNewPrivileges=true
 PrivateTmp=true
