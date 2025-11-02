@@ -33,7 +33,7 @@ fi
 # Install systemd user service
 echo "[2/4] Installing systemd user service..."
 mkdir -p ~/.config/systemd/user
-sed "s/%i/$USER/g" "$SERVICE_FILE" > ~/.config/systemd/user/cognitive-state-server.service
+cp "$SERVICE_FILE" ~/.config/systemd/user/cognitive-state-server.service
 
 # Reload systemd
 echo "[3/4] Reloading systemd daemon..."
