@@ -1,0 +1,31 @@
+[Unit]
+Description=Cognitive State Server - The In-Memory Oracle
+Documentation=https://quantumencoding.io
+After=cognitive-watcher.service
+Wants=cognitive-watcher.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/cognitive-state-server
+Restart=always
+RestartSec=5
+
+# Run as the user (since it needs session D-Bus)
+User=%i
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+
+# Allow access to cognitive watcher database
+ReadOnlyPaths=/var/lib/cognitive-watcher
+
+# Performance
+Nice=-10
+IOSchedulingClass=realtime
+IOSchedulingPriority=0
+
+[Install]
+WantedBy=default.target
