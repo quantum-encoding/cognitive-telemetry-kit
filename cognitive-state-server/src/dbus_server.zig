@@ -169,7 +169,13 @@ pub const DBusServer = struct {
             try json_buf.appendSlice(self.allocator, num_str);
 
             try json_buf.appendSlice(self.allocator, ",\"state\":\"");
-            try json_buf.appendSlice(self.allocator, state.state_type);
+            // Escape quotes and backslashes in the state string
+            for (state.state_type) |char| {
+                if (char == '"' or char == '\\') {
+                    try json_buf.append(self.allocator, '\\');
+                }
+                try json_buf.append(self.allocator, char);
+            }
             try json_buf.appendSlice(self.allocator, "\"}");
         }
         try json_buf.appendSlice(self.allocator, "]");
