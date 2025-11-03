@@ -173,8 +173,12 @@ fn runCommand(allocator: std.mem.Allocator, argv: []const []const u8) !CommandRe
 
     try child.spawn();
 
-    const stdout = try child.stdout.?.readToEndAlloc(allocator, 1024 * 1024);
-    errdefer allocator.free(stdout);
+    // Read stdout using newer Zig API
+    var stdout_list = std.ArrayList(u8).init(allocator);
+    errdefer stdout_list.deinit();
+
+    const stdout_reader = child.stdout.?.reader();
+    try stdout_reader.readAllArrayList(&stdout_list, 1024 * 1024);
 
     const term = try child.wait();
 
@@ -185,7 +189,7 @@ fn runCommand(allocator: std.mem.Allocator, argv: []const []const u8) !CommandRe
 
     return CommandResult{
         .exit_code = exit_code,
-        .stdout = stdout,
+        .stdout = try stdout_list.toOwnedSlice(),
         .allocator = allocator,
     };
 }
