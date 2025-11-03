@@ -47,6 +47,22 @@ The cognitive state **"Verifying git commits"** is captured in real-time from Cl
 - Sends events to userspace via ring buffer
 - Compiled from `cognitive-oracle-v2.bpf.c`
 
+### 5. **cognitive-state-server** (Zig Daemon - The In-Memory Oracle)
+- Zero-latency in-memory cache of cognitive states
+- Event-driven inotify watching (no polling!)
+- D-Bus interface for instant queries
+- Serves cognitive state data to GNOME extension
+- Runs as systemd user service
+- Consumes ~4MB RAM with near-zero CPU
+
+### 6. **Sentinel Cockpit** (GNOME Shell Extension)
+- Real-time cognitive state visualization in your top panel
+- Shows both whimsical states ("Discombobulating", "Finagling") and descriptive states ("Fixing authentication bug")
+- Multi-instance support - tracks multiple Claude sessions by PID
+- Click any item to open logs in konsole/terminal
+- Updates every 2 seconds via D-Bus
+- Clean, minimal UI that stays out of your way
+
 ---
 
 ## Multi-Instance Proof
