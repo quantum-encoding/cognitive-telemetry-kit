@@ -209,15 +209,12 @@ fn exportToCSV(allocator: std.mem.Allocator, options: ExportOptions) !void {
     const file = try std.fs.cwd().createFile(options.output_file, .{});
     defer file.close();
 
-    var buf: [4096]u8 = undefined;
-    const writer = file.writer(&buf);
-
     // Write CSV header
-    try writer.writeAll("id,timestamp,cognitive_state,tool_name,status,pid");
+    try file.writeAll("id,timestamp,cognitive_state,tool_name,status,pid");
     if (options.include_raw) {
-        try writer.writeAll(",raw_content");
+        try file.writeAll(",raw_content");
     }
-    try writer.writeAll("\n");
+    try file.writeAll("\n");
 
     // Write rows
     var count: usize = 0;
