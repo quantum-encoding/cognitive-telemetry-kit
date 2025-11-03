@@ -127,7 +127,7 @@ fn getCognitiveState(allocator: std.mem.Allocator, pid: ?u32) ![]const u8 {
         try args.append(allocator, pid_str);
     }
 
-    const result = try runCommand(allocator, args.items);
+    var result = try runCommand(allocator, args.items);
     defer result.deinit();
 
     if (result.exit_code == 0 and result.stdout.len > 0) {
