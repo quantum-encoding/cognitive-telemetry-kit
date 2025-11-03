@@ -1,5 +1,5 @@
 const std = @import("std");
-const sqlite = @cImport({
+const c = @cImport({
     @cInclude("sqlite3.h");
 });
 
