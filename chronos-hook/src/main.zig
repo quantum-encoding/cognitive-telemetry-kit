@@ -114,18 +114,19 @@ fn findClaudePid(allocator: std.mem.Allocator) !?u32 {
 }
 
 fn getCognitiveState(allocator: std.mem.Allocator, pid: ?u32) ![]const u8 {
-    var args = std.ArrayList([]const u8).init(allocator);
-    defer args.deinit();
+    var args = std.ArrayList([]const u8).empty;
+    defer args.deinit(allocator);
 
-    try args.append(GET_COGNITIVE_STATE_PATH);
+    try args.append(allocator, GET_COGNITIVE_STATE_PATH);
 
     if (pid) |p| {
         const pid_str = try std.fmt.allocPrint(allocator, "{d}", .{p});
         defer allocator.free(pid_str);
-        try args.append(pid_str);
+        try args.append(allocator, pid_str);
     }
 
     const result = try runCommand(allocator, args.items);
+    defer result.deinit();
 
     if (result.exit_code == 0 and result.stdout.len > 0) {
         // Trim whitespace
