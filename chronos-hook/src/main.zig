@@ -101,7 +101,7 @@ fn extractToolDescription(allocator: std.mem.Allocator, json_input: []const u8) 
 }
 
 fn findClaudePid(allocator: std.mem.Allocator) !?u32 {
-    const result = try runCommand(allocator, &[_][]const u8{ "pgrep", "-f", "claude" });
+    var result = try runCommand(allocator, &[_][]const u8{ "pgrep", "-f", "claude" });
     defer result.deinit();
 
     if (result.exit_code != 0 or result.stdout.len == 0) {
