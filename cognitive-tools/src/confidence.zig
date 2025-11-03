@@ -223,13 +223,13 @@ fn printStats(allocator: std.mem.Allocator) !void {
     const stdout = std.io.getStdOut().writer();
 
     // Open database
-    var db: ?*sqlite.sqlite3 = null;
+    var db: ?*c.sqlite3 = null;
     const db_uri = "file:" ++ DB_PATH ++ "?immutable=1";
-    if (sqlite.sqlite3_open(db_uri.ptr, &db) != sqlite.SQLITE_OK) {
+    if (c.sqlite3_open(db_uri.ptr, &db) != c.SQLITE_OK) {
         try stdout.print("Error: Cannot open database\n", .{});
         return error.DatabaseError;
     }
-    defer _ = sqlite.sqlite3_close(db);
+    defer _ = c.sqlite3_close(db);
 
     const query =
         \\SELECT
@@ -243,12 +243,12 @@ fn printStats(allocator: std.mem.Allocator) !void {
         \\ORDER BY count DESC;
     ;
 
-    var stmt: ?*sqlite.sqlite3_stmt = null;
-    if (sqlite.sqlite3_prepare_v2(db, query.ptr, -1, &stmt, null) != sqlite.SQLITE_OK) {
+    var stmt: ?*c.sqlite3_stmt = null;
+    if (c.sqlite3_prepare_v2(db, query.ptr, -1, &stmt, null) != c.SQLITE_OK) {
         try stdout.print("Error: Failed to prepare query\n", .{});
         return error.QueryError;
     }
-    defer _ = sqlite.sqlite3_finalize(stmt);
+    defer _ = c.sqlite3_finalize(stmt);
 
     try stdout.print("\n🧠 COGNITIVE STATE CONFIDENCE ANALYSIS\n", .{});
     try stdout.print("═══════════════════════════════════════════════════════════════════\n\n", .{});
@@ -260,9 +260,9 @@ fn printStats(allocator: std.mem.Allocator) !void {
     var states = std.ArrayList(struct { state: []const u8, count: u64 }).init(allocator);
     defer states.deinit();
 
-    while (sqlite.sqlite3_step(stmt) == sqlite.SQLITE_ROW) {
-        const state_ptr = sqlite.sqlite3_column_text(stmt, 0);
-        const count = @as(u64, @intCast(sqlite.sqlite3_column_int64(stmt, 1)));
+    while (c.sqlite3_step(stmt) == c.SQLITE_ROW) {
+        const state_ptr = c.sqlite3_column_text(stmt, 0);
+        const count = @as(u64, @intCast(c.sqlite3_column_int64(stmt, 1)));
 
         if (state_ptr != null) {
             const state = std.mem.span(state_ptr);
@@ -325,13 +325,13 @@ fn printSessionConfidence(allocator: std.mem.Allocator, pid: u32) !void {
     const stdout = std.io.getStdOut().writer();
 
     // Open database
-    var db: ?*sqlite.sqlite3 = null;
+    var db: ?*c.sqlite3 = null;
     const db_uri = "file:" ++ DB_PATH ++ "?immutable=1";
-    if (sqlite.sqlite3_open(db_uri.ptr, &db) != sqlite.SQLITE_OK) {
+    if (c.sqlite3_open(db_uri.ptr, &db) != c.SQLITE_OK) {
         try stdout.print("Error: Cannot open database\n", .{});
         return error.DatabaseError;
     }
-    defer _ = sqlite.sqlite3_close(db);
+    defer _ = c.sqlite3_close(db);
 
     const query =
         \\SELECT
@@ -345,14 +345,14 @@ fn printSessionConfidence(allocator: std.mem.Allocator, pid: u32) !void {
         \\LIMIT 100;
     ;
 
-    var stmt: ?*sqlite.sqlite3_stmt = null;
-    if (sqlite.sqlite3_prepare_v2(db, query.ptr, -1, &stmt, null) != sqlite.SQLITE_OK) {
+    var stmt: ?*c.sqlite3_stmt = null;
+    if (c.sqlite3_prepare_v2(db, query.ptr, -1, &stmt, null) != c.SQLITE_OK) {
         try stdout.print("Error: Failed to prepare query\n", .{});
         return error.QueryError;
     }
-    defer _ = sqlite.sqlite3_finalize(stmt);
+    defer _ = c.sqlite3_finalize(stmt);
 
-    _ = sqlite.sqlite3_bind_int(stmt, 1, @as(c_int, @intCast(pid)));
+    _ = c.sqlite3_bind_int(stmt, 1, @as(c_int, @intCast(pid)));
 
     try stdout.print("\n🧠 SESSION CONFIDENCE TIMELINE - PID {d}\n", .{pid});
     try stdout.print("═══════════════════════════════════════════════════════════════════\n\n", .{});
@@ -360,9 +360,9 @@ fn printSessionConfidence(allocator: std.mem.Allocator, pid: u32) !void {
     var count: u32 = 0;
     var total_confidence: f64 = 0.0;
 
-    while (sqlite.sqlite3_step(stmt) == sqlite.SQLITE_ROW) {
-        const timestamp_ptr = sqlite.sqlite3_column_text(stmt, 0);
-        const state_ptr = sqlite.sqlite3_column_text(stmt, 1);
+    while (c.sqlite3_step(stmt) == c.SQLITE_ROW) {
+        const timestamp_ptr = c.sqlite3_column_text(stmt, 0);
+        const state_ptr = c.sqlite3_column_text(stmt, 1);
 
         if (timestamp_ptr != null and state_ptr != null) {
             const timestamp = std.mem.span(timestamp_ptr);
