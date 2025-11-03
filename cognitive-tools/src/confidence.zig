@@ -127,7 +127,7 @@ pub fn getCategoryEmoji(category: StateConfidence.Category) []const u8 {
 
 const RESET = "\x1b[0m";
 
-pub fn main() !void {
+pub fn main() !u8 {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
     const allocator = gpa.allocator();
