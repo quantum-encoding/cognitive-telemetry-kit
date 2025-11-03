@@ -323,5 +323,5 @@ fn escapeCSV(allocator: std.mem.Allocator, value: []const u8) ![]const u8 {
     }
     try result.append(allocator, '"');
 
-    return try result.toOwnedSlice();
+    return try result.toOwnedSlice(allocator);
 }
