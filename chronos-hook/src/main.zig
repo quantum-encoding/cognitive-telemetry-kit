@@ -45,19 +45,19 @@ pub fn main() !u8 {
     defer allocator.free(chronos_output);
 
     // Build commit message
-    var commit_msg = std.ArrayList(u8).init(allocator);
-    defer commit_msg.deinit();
+    var commit_msg = std.ArrayList(u8).empty;
+    defer commit_msg.deinit(allocator);
 
     // Inject cognitive state into CHRONOS output
     // Replace "::::TICK" with "::<state>::TICK"
     if (std.mem.indexOf(u8, chronos_output, "::::TICK")) |pos| {
-        try commit_msg.appendSlice(chronos_output[0..pos]);
-        try commit_msg.appendSlice("::");
-        try commit_msg.appendSlice(cognitive_state);
-        try commit_msg.appendSlice("::");
-        try commit_msg.appendSlice(chronos_output[pos + 4 ..]);
+        try commit_msg.appendSlice(allocator, chronos_output[0..pos]);
+        try commit_msg.appendSlice(allocator, "::");
+        try commit_msg.appendSlice(allocator, cognitive_state);
+        try commit_msg.appendSlice(allocator, "::");
+        try commit_msg.appendSlice(allocator, chronos_output[pos + 4 ..]);
     } else {
-        try commit_msg.appendSlice(chronos_output);
+        try commit_msg.appendSlice(allocator, chronos_output);
     }
 
     // Append tool description if available
