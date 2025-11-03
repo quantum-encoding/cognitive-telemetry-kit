@@ -221,14 +221,18 @@ fn exportToCSV(allocator: std.mem.Allocator, options: ExportOptions) !void {
     while (c.sqlite3_step(stmt) == c.SQLITE_ROW) {
         // id
         const id = c.sqlite3_column_int64(stmt, 0);
-        try writer.print("{d},", .{id});
+        const id_str = try std.fmt.allocPrint(allocator, "{d},", .{id});
+        defer allocator.free(id_str);
+        try file.writeAll(id_str);
 
         // timestamp
         if (c.sqlite3_column_text(stmt, 1)) |timestamp| {
             const timestamp_str = std.mem.span(timestamp);
-            try writer.print("\"{s}\",", .{timestamp_str});
+            const ts = try std.fmt.allocPrint(allocator, "\"{s}\",", .{timestamp_str});
+            defer allocator.free(ts);
+            try file.writeAll(ts);
         } else {
-            try writer.writeAll(",");
+            try file.writeAll(",");
         }
 
         // cognitive_state
@@ -236,9 +240,11 @@ fn exportToCSV(allocator: std.mem.Allocator, options: ExportOptions) !void {
             const state_str = std.mem.span(state);
             const escaped = try escapeCSV(allocator, state_str);
             defer allocator.free(escaped);
-            try writer.print("{s},", .{escaped});
+            const st = try std.fmt.allocPrint(allocator, "{s},", .{escaped});
+            defer allocator.free(st);
+            try file.writeAll(st);
         } else {
-            try writer.writeAll(",");
+            try file.writeAll(",");
         }
 
         // tool_name
@@ -246,9 +252,11 @@ fn exportToCSV(allocator: std.mem.Allocator, options: ExportOptions) !void {
             const tool_str = std.mem.span(tool);
             const escaped = try escapeCSV(allocator, tool_str);
             defer allocator.free(escaped);
-            try writer.print("{s},", .{escaped});
+            const t = try std.fmt.allocPrint(allocator, "{s},", .{escaped});
+            defer allocator.free(t);
+            try file.writeAll(t);
         } else {
-            try writer.writeAll(",");
+            try file.writeAll(",");
         }
 
         // status
@@ -256,14 +264,18 @@ fn exportToCSV(allocator: std.mem.Allocator, options: ExportOptions) !void {
             const status_str = std.mem.span(status);
             const escaped = try escapeCSV(allocator, status_str);
             defer allocator.free(escaped);
-            try writer.print("{s},", .{escaped});
+            const s = try std.fmt.allocPrint(allocator, "{s},", .{escaped});
+            defer allocator.free(s);
+            try file.writeAll(s);
         } else {
-            try writer.writeAll(",");
+            try file.writeAll(",");
         }
 
         // pid
         const pid = c.sqlite3_column_int(stmt, 5);
-        try writer.print("{d}", .{pid});
+        const pid_str = try std.fmt.allocPrint(allocator, "{d}", .{pid});
+        defer allocator.free(pid_str);
+        try file.writeAll(pid_str);
 
         // raw_content (optional)
         if (options.include_raw) {
@@ -271,13 +283,15 @@ fn exportToCSV(allocator: std.mem.Allocator, options: ExportOptions) !void {
                 const raw_str = std.mem.span(raw);
                 const escaped = try escapeCSV(allocator, raw_str);
                 defer allocator.free(escaped);
-                try writer.print(",{s}", .{escaped});
+                const r = try std.fmt.allocPrint(allocator, ",{s}", .{escaped});
+                defer allocator.free(r);
+                try file.writeAll(r);
             } else {
-                try writer.writeAll(",");
+                try file.writeAll(",");
             }
         }
 
-        try writer.writeAll("\n");
+        try file.writeAll("\n");
         count += 1;
     }
 
