@@ -218,8 +218,6 @@ fn showSession(allocator: std.mem.Allocator, pid: u32) !void {
     }
 
     std.debug.print("\nTotal: {d} state changes\n\n", .{total});
-
-    _ = allocator;
 }
 
 fn showTimeline(allocator: std.mem.Allocator, pid: u32) !void {
