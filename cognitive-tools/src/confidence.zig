@@ -138,7 +138,7 @@ pub fn main() !u8 {
     // Command: cognitive-confidence [session|stats|score]
     if (args.len < 2) {
         try printUsage();
-        return;
+        return 0;
     }
 
     const command = args[1];
@@ -156,6 +156,8 @@ pub fn main() !u8 {
     } else {
         try printUsage();
     }
+
+    return 0;
 }
 
 fn printUsage() !void {
