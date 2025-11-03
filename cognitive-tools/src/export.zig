@@ -209,7 +209,8 @@ fn exportToCSV(allocator: std.mem.Allocator, options: ExportOptions) !void {
     const file = try std.fs.cwd().createFile(options.output_file, .{});
     defer file.close();
 
-    const writer = file.writer();
+    var buf: [4096]u8 = undefined;
+    const writer = file.writer(&buf);
 
     // Write CSV header
     try writer.writeAll("id,timestamp,cognitive_state,tool_name,status,pid");
