@@ -143,7 +143,7 @@ fn getCognitiveState(allocator: std.mem.Allocator, pid: ?u32) ![]const u8 {
 }
 
 fn generateChronosTimestamp(allocator: std.mem.Allocator) ![]const u8 {
-    const result = try runCommand(allocator, &[_][]const u8{ CHRONOS_STAMP_PATH, AGENT_ID, "tool-completion" });
+    var result = try runCommand(allocator, &[_][]const u8{ CHRONOS_STAMP_PATH, AGENT_ID, "tool-completion" });
     defer result.deinit();
 
     if (result.exit_code == 0 and result.stdout.len > 0) {
