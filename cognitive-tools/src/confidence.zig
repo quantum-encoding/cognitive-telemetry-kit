@@ -321,7 +321,7 @@ fn printStats(allocator: std.mem.Allocator) !void {
     }
 }
 
-fn printSessionConfidence(allocator_unused: std.mem.Allocator, pid: u32) !void {
+fn printSessionConfidence(_: std.mem.Allocator, pid: u32) !void {
     // Use std.debug.print instead
 
     // Open database
