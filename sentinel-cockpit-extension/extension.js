@@ -367,11 +367,13 @@ class SentinelCockpit extends PanelMenu.Button {
                 let item = new PopupMenu.PopupMenuItem(stateText);
                 item.connect('activate', () => {
                     try {
-                        const command = `konsole -e bash -c "journalctl -f _PID=${pid}; exec bash"`;
-                        log('[Sentinel Cockpit] Opening cognitive logs for PID: ' + pid);
+                        // Cognitive states are stored in SQLite, not journalctl
+                        // Use file:// URI with immutable flag to allow reads while watcher has db locked
+                        const command = `konsole -e bash -c "echo '🧠 Cognitive States for PID ${pid}:'; echo ''; sqlite3 'file:/var/lib/cognitive-watcher/cognitive-states.db?immutable=1' \\"SELECT timestamp_human, TRIM(substr(raw_content, instr(raw_content, '*') + 1, CASE WHEN instr(substr(raw_content, instr(raw_content, '*')), '(') > 0 THEN instr(substr(raw_content, instr(raw_content, '*')), '(') - 1 ELSE length(raw_content) END)) as state FROM cognitive_states WHERE pid=${pid} ORDER BY id DESC LIMIT 50;\\" | column -t -s '|'; echo ''; echo ''; echo 'Or use: cognitive-query session ${pid}'; echo ''; read -p 'Press Enter to continue...'; exec bash"`;
+                        log('[Sentinel Cockpit] Opening cognitive states for PID: ' + pid);
                         GLib.spawn_command_line_async(command);
                     } catch (e) {
-                        log('[Sentinel Cockpit] Failed to open logs: ' + e.message);
+                        log('[Sentinel Cockpit] Failed to open cognitive states: ' + e.message);
                     }
                 });
                 this._cognitiveSection.addMenuItem(item);
