@@ -160,7 +160,8 @@ fn queryCognitiveStates(allocator: std.mem.Allocator, cache: *StateCache) !void 
     const query =
         \\SELECT timestamp_human, raw_content, tool_name, status, pid
         \\FROM cognitive_states
-        \\WHERE raw_content LIKE '%esc to interrupt%'
+        \\WHERE raw_content LIKE '%*%'
+        \\  AND raw_content LIKE '%esc to interrupt%'
         \\  AND raw_content NOT LIKE '%Bash(%'
         \\  AND raw_content NOT LIKE '%Read(%'
         \\  AND raw_content NOT LIKE '%Write(%'
