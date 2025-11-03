@@ -63,6 +63,20 @@ The cognitive state **"Verifying git commits"** is captured in real-time from Cl
 - Updates every 2 seconds via D-Bus
 - Clean, minimal UI that stays out of your way
 
+### 7. **chronos-hook** (Global Git Hook Binary)
+- Fast compiled Zig binary replacing slow bash scripts
+- Install once, symlink everywhere
+- 10x faster execution (~5-10ms vs 50-100ms)
+- Single update point for all repositories
+- See `chronos-hook/README.md` for details
+
+### 8. **cognitive-tools** (User-Facing CLI Tools)
+Three powerful utilities for analyzing your cognitive data:
+- **cognitive-export** - Export states to CSV with filters
+- **cognitive-stats** - Beautiful analytics dashboard
+- **cognitive-query** - Advanced search and session replay
+- See `cognitive-tools/README.md` for full documentation
+
 ---
 
 ## Multi-Instance Proof
@@ -174,6 +188,35 @@ After installation:
 - GNOME Shell 45+
 - cognitive-state-server running
 - Terminal emulator (konsole, gnome-terminal, etc.)
+
+### Install Cognitive Tools (CLI Utilities)
+
+Powerful user-facing tools for data analysis and export:
+
+```bash
+cd cognitive-tools
+zig build
+./install.sh
+```
+
+This installs three global commands:
+- `cognitive-export` - Export states to CSV
+- `cognitive-stats` - View beautiful analytics
+- `cognitive-query` - Search and query states
+
+Try it:
+```bash
+# See your stats
+cognitive-stats
+
+# Export to CSV
+cognitive-export -o my-states.csv
+
+# Search for specific states
+cognitive-query search "Thinking"
+```
+
+See `cognitive-tools/README.md` for full documentation and examples.
 
 ---
 
