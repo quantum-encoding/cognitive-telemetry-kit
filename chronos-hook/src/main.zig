@@ -62,8 +62,8 @@ pub fn main() !u8 {
 
     // Append tool description if available
     if (tool_description) |desc| {
-        try commit_msg.appendSlice(" - ");
-        try commit_msg.appendSlice(desc);
+        try commit_msg.appendSlice(allocator, " - ");
+        try commit_msg.appendSlice(allocator, desc);
     }
 
     // Stage all changes
