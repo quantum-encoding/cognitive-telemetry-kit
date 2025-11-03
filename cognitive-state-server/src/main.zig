@@ -109,12 +109,21 @@ fn extractCognitiveState(allocator: std.mem.Allocator, raw_content: []const u8) 
     // Find the * character
     const star_pos = std.mem.indexOf(u8, raw_content, "*") orelse return allocator.dupe(u8, "Unknown");
 
-    // Find the ( character after the *
-    const paren_pos = std.mem.indexOf(u8, raw_content[star_pos..], "(") orelse return allocator.dupe(u8, "Unknown");
-
-    // Extract text between * and (
     const start = star_pos + 1; // Skip the *
-    const end = star_pos + paren_pos;
+
+    // Find the ( character after the * (if it exists)
+    const paren_pos = std.mem.indexOf(u8, raw_content[star_pos..], "(");
+
+    // Determine end position:
+    // - If there's a (, use it
+    // - Otherwise, use the end of the string or newline
+    const end = if (paren_pos) |pos|
+        star_pos + pos
+    else blk: {
+        // No parenthesis found - extract until newline or end of string
+        const newline_pos = std.mem.indexOf(u8, raw_content[star_pos..], "\n");
+        break :blk if (newline_pos) |npos| star_pos + npos else raw_content.len;
+    };
 
     if (start >= end) return allocator.dupe(u8, "Unknown");
 
