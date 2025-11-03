@@ -161,8 +161,8 @@ pub fn main() !u8 {
 }
 
 fn printUsage() !void {
-    const stdout = std.io.getStdOut().writer();
-    try stdout.print(
+    // Use std.debug.print instead
+    std.debug.print(
         \\🧠 COGNITIVE CONFIDENCE ANALYZER
         \\
         \\Usage:
@@ -180,53 +180,53 @@ fn printUsage() !void {
 }
 
 fn printLegend() !void {
-    const stdout = std.io.getStdOut().writer();
-    try stdout.print("\n🎯 COGNITIVE CONFIDENCE SCORING LEGEND\n", .{});
-    try stdout.print("═══════════════════════════════════════════════════════════\n\n", .{});
+    // Use std.debug.print instead
+    std.debug.print("\n🎯 COGNITIVE CONFIDENCE SCORING LEGEND\n", .{});
+    std.debug.print("═══════════════════════════════════════════════════════════\n\n", .{});
 
-    try stdout.print("✨ EXCELLENT (0.90-1.00) - High Confidence, Focused Execution\n", .{});
-    try stdout.print("  States indicate clear understanding and purposeful action\n\n", .{});
+    std.debug.print("✨ EXCELLENT (0.90-1.00) - High Confidence, Focused Execution\n", .{});
+    std.debug.print("  States indicate clear understanding and purposeful action\n\n", .{});
 
-    try stdout.print("✅ GOOD (0.70-0.89) - Productive Progress\n", .{});
-    try stdout.print("  Solid work with minor exploration or iteration\n\n", .{});
+    std.debug.print("✅ GOOD (0.70-0.89) - Productive Progress\n", .{});
+    std.debug.print("  Solid work with minor exploration or iteration\n\n", .{});
 
-    try stdout.print("➖ NEUTRAL (0.50-0.69) - Standard Operations\n", .{});
-    try stdout.print("  Normal processing, no strong quality signal\n\n", .{});
+    std.debug.print("➖ NEUTRAL (0.50-0.69) - Standard Operations\n", .{});
+    std.debug.print("  Normal processing, no strong quality signal\n\n", .{});
 
-    try stdout.print("⚠️  CONCERNING (0.30-0.49) - Uncertainty Detected\n", .{});
-    try stdout.print("  Exploration without clear direction, potential inefficiency\n\n", .{});
+    std.debug.print("⚠️  CONCERNING (0.30-0.49) - Uncertainty Detected\n", .{});
+    std.debug.print("  Exploration without clear direction, potential inefficiency\n\n", .{});
 
-    try stdout.print("🚨 PROBLEMATIC (0.00-0.29) - Quality Issues\n", .{});
-    try stdout.print("  Confusion, guessing, or poor development practices\n\n", .{});
+    std.debug.print("🚨 PROBLEMATIC (0.00-0.29) - Quality Issues\n", .{});
+    std.debug.print("  Confusion, guessing, or poor development practices\n\n", .{});
 
-    try stdout.print("Examples:\n", .{});
-    try stdout.print("  ✨ Channelling      (1.00) - Deep focus, knows exactly what to do\n", .{});
-    try stdout.print("  ✅ Computing        (0.85) - Processing information systematically\n", .{});
-    try stdout.print("  ➖ Thinking         (0.65) - General processing\n", .{});
-    try stdout.print("  ⚠️  Noodling        (0.48) - Exploring without clear plan\n", .{});
-    try stdout.print("  🚨 Discombobulating (0.25) - Confused, not knowing what to do\n\n", .{});
+    std.debug.print("Examples:\n", .{});
+    std.debug.print("  ✨ Channelling      (1.00) - Deep focus, knows exactly what to do\n", .{});
+    std.debug.print("  ✅ Computing        (0.85) - Processing information systematically\n", .{});
+    std.debug.print("  ➖ Thinking         (0.65) - General processing\n", .{});
+    std.debug.print("  ⚠️  Noodling        (0.48) - Exploring without clear plan\n", .{});
+    std.debug.print("  🚨 Discombobulating (0.25) - Confused, not knowing what to do\n\n", .{});
 }
 
 fn printStateScore(state: []const u8) !void {
-    const stdout = std.io.getStdOut().writer();
+    // Use std.debug.print instead
     const score = getConfidenceScore(state);
     const color = getCategoryColor(score.category);
     const emoji = getCategoryEmoji(score.category);
 
-    try stdout.print("\n{s}{s} State: {s}{s}\n", .{ color, emoji, state, RESET });
-    try stdout.print("   Confidence: {s}{d:.2}{s}\n", .{ color, score.confidence, RESET });
-    try stdout.print("   Category: {s}\n", .{@tagName(score.category)});
-    try stdout.print("   Meaning: {s}\n\n", .{score.description});
+    std.debug.print("\n{s}{s} State: {s}{s}\n", .{ color, emoji, state, RESET });
+    std.debug.print("   Confidence: {s}{d:.2}{s}\n", .{ color, score.confidence, RESET });
+    std.debug.print("   Category: {s}\n", .{@tagName(score.category)});
+    std.debug.print("   Meaning: {s}\n\n", .{score.description});
 }
 
 fn printStats(allocator: std.mem.Allocator) !void {
-    const stdout = std.io.getStdOut().writer();
+    // Use std.debug.print instead
 
     // Open database
     var db: ?*c.sqlite3 = null;
     const db_uri = "file:" ++ DB_PATH ++ "?immutable=1";
     if (c.sqlite3_open(db_uri.ptr, &db) != c.SQLITE_OK) {
-        try stdout.print("Error: Cannot open database\n", .{});
+        std.debug.print("Error: Cannot open database\n", .{});
         return error.DatabaseError;
     }
     defer _ = c.sqlite3_close(db);
@@ -245,13 +245,13 @@ fn printStats(allocator: std.mem.Allocator) !void {
 
     var stmt: ?*c.sqlite3_stmt = null;
     if (c.sqlite3_prepare_v2(db, query.ptr, -1, &stmt, null) != c.SQLITE_OK) {
-        try stdout.print("Error: Failed to prepare query\n", .{});
+        std.debug.print("Error: Failed to prepare query\n", .{});
         return error.QueryError;
     }
     defer _ = c.sqlite3_finalize(stmt);
 
-    try stdout.print("\n🧠 COGNITIVE STATE CONFIDENCE ANALYSIS\n", .{});
-    try stdout.print("═══════════════════════════════════════════════════════════════════\n\n", .{});
+    std.debug.print("\n🧠 COGNITIVE STATE CONFIDENCE ANALYSIS\n", .{});
+    std.debug.print("═══════════════════════════════════════════════════════════════════\n\n", .{});
 
     var total_states: u64 = 0;
     var weighted_confidence: f64 = 0.0;
@@ -284,8 +284,8 @@ fn printStats(allocator: std.mem.Allocator) !void {
     const overall_color = getCategoryColor(overall_category);
     const overall_emoji = getCategoryEmoji(overall_category);
 
-    try stdout.print("{s}{s} Overall Session Confidence: {d:.3}{s}\n", .{ overall_color, overall_emoji, avg_confidence, RESET });
-    try stdout.print("   Total cognitive states: {d}\n\n", .{total_states});
+    std.debug.print("{s}{s} Overall Session Confidence: {d:.3}{s}\n", .{ overall_color, overall_emoji, avg_confidence, RESET });
+    std.debug.print("   Total cognitive states: {d}\n\n", .{total_states});
 
     // Print states grouped by category
     const categories = [_]StateConfidence.Category{ .excellent, .good, .neutral, .concerning, .problematic };
@@ -293,13 +293,13 @@ fn printStats(allocator: std.mem.Allocator) !void {
     for (categories) |category| {
         const color = getCategoryColor(category);
         const emoji = getCategoryEmoji(category);
-        try stdout.print("{s}{s} {s} States:{s}\n", .{ color, emoji, @tagName(category), RESET });
+        std.debug.print("{s}{s} {s} States:{s}\n", .{ color, emoji, @tagName(category), RESET });
 
         var found = false;
         for (states.items) |item| {
             const score = getConfidenceScore(item.state);
             if (score.category == category) {
-                try stdout.print("   {s}{d:.2}{s}  {s: <25} ({d: >5} occurrences)\n", .{
+                std.debug.print("   {s}{d:.2}{s}  {s: <25} ({d: >5} occurrences)\n", .{
                     color,
                     score.confidence,
                     RESET,
@@ -310,9 +310,9 @@ fn printStats(allocator: std.mem.Allocator) !void {
             }
         }
         if (!found) {
-            try stdout.print("   (none)\n", .{});
+            std.debug.print("   (none)\n", .{});
         }
-        try stdout.print("\n", .{});
+        std.debug.print("\n", .{});
     }
 
     // Cleanup
@@ -322,13 +322,13 @@ fn printStats(allocator: std.mem.Allocator) !void {
 }
 
 fn printSessionConfidence(allocator: std.mem.Allocator, pid: u32) !void {
-    const stdout = std.io.getStdOut().writer();
+    // Use std.debug.print instead
 
     // Open database
     var db: ?*c.sqlite3 = null;
     const db_uri = "file:" ++ DB_PATH ++ "?immutable=1";
     if (c.sqlite3_open(db_uri.ptr, &db) != c.SQLITE_OK) {
-        try stdout.print("Error: Cannot open database\n", .{});
+        std.debug.print("Error: Cannot open database\n", .{});
         return error.DatabaseError;
     }
     defer _ = c.sqlite3_close(db);
@@ -347,15 +347,15 @@ fn printSessionConfidence(allocator: std.mem.Allocator, pid: u32) !void {
 
     var stmt: ?*c.sqlite3_stmt = null;
     if (c.sqlite3_prepare_v2(db, query.ptr, -1, &stmt, null) != c.SQLITE_OK) {
-        try stdout.print("Error: Failed to prepare query\n", .{});
+        std.debug.print("Error: Failed to prepare query\n", .{});
         return error.QueryError;
     }
     defer _ = c.sqlite3_finalize(stmt);
 
     _ = c.sqlite3_bind_int(stmt, 1, @as(c_int, @intCast(pid)));
 
-    try stdout.print("\n🧠 SESSION CONFIDENCE TIMELINE - PID {d}\n", .{pid});
-    try stdout.print("═══════════════════════════════════════════════════════════════════\n\n", .{});
+    std.debug.print("\n🧠 SESSION CONFIDENCE TIMELINE - PID {d}\n", .{pid});
+    std.debug.print("═══════════════════════════════════════════════════════════════════\n\n", .{});
 
     var count: u32 = 0;
     var total_confidence: f64 = 0.0;
@@ -372,7 +372,7 @@ fn printSessionConfidence(allocator: std.mem.Allocator, pid: u32) !void {
             const color = getCategoryColor(score.category);
             const emoji = getCategoryEmoji(score.category);
 
-            try stdout.print("{s} {s}{s} {d:.2}{s} - {s: <25} ({s})\n", .{
+            std.debug.print("{s} {s}{s} {d:.2}{s} - {s: <25} ({s})\n", .{
                 timestamp,
                 color,
                 emoji,
@@ -394,11 +394,11 @@ fn printSessionConfidence(allocator: std.mem.Allocator, pid: u32) !void {
         const color = getCategoryColor(category);
         const emoji = getCategoryEmoji(category);
 
-        try stdout.print("\n{s}{s} Session Average: {d:.3}{s}\n", .{ color, emoji, avg, RESET });
-        try stdout.print("   States analyzed: {d}\n", .{count});
+        std.debug.print("\n{s}{s} Session Average: {d:.3}{s}\n", .{ color, emoji, avg, RESET });
+        std.debug.print("   States analyzed: {d}\n", .{count});
     } else {
-        try stdout.print("No cognitive states found for PID {d}\n", .{pid});
+        std.debug.print("No cognitive states found for PID {d}\n", .{pid});
     }
 
-    try stdout.print("\n", .{});
+    std.debug.print("\n", .{});
 }
