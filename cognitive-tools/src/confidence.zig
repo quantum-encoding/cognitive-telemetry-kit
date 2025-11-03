@@ -324,11 +324,12 @@ fn printStats(allocator: std.mem.Allocator) !void {
 fn printSessionConfidence(_: std.mem.Allocator, pid: u32) !void {
     // Use std.debug.print instead
 
-    // Open database
+    // Open database with immutable flag
     var db: ?*c.sqlite3 = null;
     const db_uri = "file:" ++ DB_PATH ++ "?immutable=1";
-    if (c.sqlite3_open(db_uri.ptr, &db) != c.SQLITE_OK) {
-        std.debug.print("Error: Cannot open database\n", .{});
+    const flags = c.SQLITE_OPEN_READONLY | c.SQLITE_OPEN_URI;
+    if (c.sqlite3_open_v2(db_uri.ptr, &db, flags, null) != c.SQLITE_OK) {
+        std.debug.print("Error: Cannot open database at {s}\n", .{DB_PATH});
         return error.DatabaseError;
     }
     defer _ = c.sqlite3_close(db);
