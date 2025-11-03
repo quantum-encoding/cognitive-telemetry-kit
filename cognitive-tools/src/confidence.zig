@@ -257,7 +257,7 @@ fn printStats(allocator: std.mem.Allocator) !void {
     var weighted_confidence: f64 = 0.0;
 
     // Collect all states first
-    var states = std.ArrayList(struct { state: []const u8, count: u64 }).init(allocator);
+    var states = std.ArrayList(struct { state: []const u8, count: u64 }).empty;
     defer states.deinit();
 
     while (c.sqlite3_step(stmt) == c.SQLITE_ROW) {
@@ -321,7 +321,7 @@ fn printStats(allocator: std.mem.Allocator) !void {
     }
 }
 
-fn printSessionConfidence(allocator: std.mem.Allocator, pid: u32) !void {
+fn printSessionConfidence(allocator_unused: std.mem.Allocator, pid: u32) !void {
     // Use std.debug.print instead
 
     // Open database
