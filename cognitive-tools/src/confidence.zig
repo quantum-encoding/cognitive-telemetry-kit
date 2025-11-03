@@ -258,7 +258,7 @@ fn printStats(allocator: std.mem.Allocator) !void {
 
     // Collect all states first
     var states = std.ArrayList(struct { state: []const u8, count: u64 }).empty;
-    defer states.deinit();
+    defer states.deinit(allocator);
 
     while (c.sqlite3_step(stmt) == c.SQLITE_ROW) {
         const state_ptr = c.sqlite3_column_text(stmt, 0);
@@ -266,7 +266,7 @@ fn printStats(allocator: std.mem.Allocator) !void {
 
         if (state_ptr != null) {
             const state = std.mem.span(state_ptr);
-            try states.append(.{
+            try states.append(allocator, .{
                 .state = try allocator.dupe(u8, state),
                 .count = count,
             });
