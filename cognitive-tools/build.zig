@@ -45,4 +45,18 @@ pub fn build(b: *std.Build) void {
     query_exe.linkLibC();
     query_exe.linkSystemLibrary("sqlite3");
     b.installArtifact(query_exe);
+
+    // cognitive-confidence - Code quality confidence analyzer
+    const confidence_mod = b.createModule(.{
+        .root_source_file = b.path("src/confidence.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+    const confidence_exe = b.addExecutable(.{
+        .name = "cognitive-confidence",
+        .root_module = confidence_mod,
+    });
+    confidence_exe.linkLibC();
+    confidence_exe.linkSystemLibrary("sqlite3");
+    b.installArtifact(confidence_exe);
 }
