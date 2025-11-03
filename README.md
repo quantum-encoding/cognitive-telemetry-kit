@@ -126,6 +126,55 @@ sqlite3 /var/lib/cognitive-watcher/cognitive-states.db \
   "SELECT COUNT(*) FROM cognitive_states WHERE pid=$(pgrep -f claude);"
 ```
 
+### Install Cognitive State Server (The Oracle)
+
+The cognitive-state-server provides instant access to cognitive states via D-Bus:
+
+```bash
+cd cognitive-state-server
+zig build
+./install.sh
+```
+
+This will:
+1. Build the Zig daemon
+2. Install binary to `~/.local/bin/cognitive-state-server`
+3. Install systemd user service
+4. Enable and start the service
+
+Verify it's working:
+```bash
+# Check service status
+systemctl --user status cognitive-state-server
+
+# Test D-Bus interface
+gdbus call --session \
+  --dest org.jesternet.CognitiveOracle \
+  --object-path /org/jesternet/CognitiveOracle \
+  --method org.jesternet.CognitiveOracle.GetCurrentState
+```
+
+### Install Sentinel Cockpit (GNOME Extension)
+
+Real-time cognitive state visualization in your top panel:
+
+```bash
+cd sentinel-cockpit-extension
+mkdir -p ~/.local/share/gnome-shell/extensions/sentinel-cockpit@jesternet.org
+cp * ~/.local/share/gnome-shell/extensions/sentinel-cockpit@jesternet.org/
+gnome-extensions enable sentinel-cockpit@jesternet.org
+```
+
+After installation:
+1. Look for the security shield icon in your top panel
+2. Click it to see real-time cognitive states
+3. Click any state to open logs
+
+**Requirements:**
+- GNOME Shell 45+
+- cognitive-state-server running
+- Terminal emulator (konsole, gnome-terminal, etc.)
+
 ---
 
 ## Claude Code Hook Setup
