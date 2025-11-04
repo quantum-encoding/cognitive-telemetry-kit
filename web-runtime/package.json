@@ -1,0 +1,35 @@
+{
+  "name": "@cognitive-telemetry/web-runtime",
+  "version": "1.0.0",
+  "description": "Cognitive Telemetry Kit - Web Runtime Version with CHRONOS timestamps",
+  "main": "cognitive-tracker.js",
+  "scripts": {
+    "test": "node test.js",
+    "server": "node sync-server.js",
+    "install-hooks": "bash git-hooks/install.sh"
+  },
+  "bin": {
+    "chronos-stamp": "./chronos-stamp.js",
+    "cognitive-tracker": "./cognitive-tracker.js",
+    "chronos-sync": "./sync-server.js"
+  },
+  "keywords": [
+    "chronos",
+    "cognitive",
+    "telemetry",
+    "ai",
+    "claude",
+    "timestamps",
+    "git",
+    "hooks"
+  ],
+  "author": "Cognitive Telemetry Kit Contributors",
+  "license": "GPL-3.0 OR Commercial",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/quantum-encoding/cognitive-telemetry-kit"
+  }
+}
