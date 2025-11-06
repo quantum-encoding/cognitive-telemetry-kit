@@ -55,24 +55,20 @@ get_state_from_db() {
     fi
 
     # Extract cognitive state from raw_content
-    # Handles two formats:
-    # 1. "* Finagling (esc to interrupt..." (16% of records)
-    # 2. " Finagling (esc to interrupt..." (84% of records - no asterisk)
-    # Strategy: Trim whitespace, remove leading "* " if present, extract until " ("
+    # raw_content is multiline and contains the status line with format:
+    #   " Befuddling (esc to interrupt  7s   69 tokens)"
+    # or with asterisk:
+    #   "* Finagling (esc to interrupt  66s   2.3k tokens)"
+    # Strategy: Find the line with "(esc to interrupt", extract text before it, trim whitespace and "*"
+
+    # Get the raw_content, extract lines with "(esc to interrupt", take text before it
     local cognitive_state=$(sqlite3 "$DB_PATH" "
-        SELECT replace(replace(
-            CASE
-                WHEN trim(raw_content) LIKE '* %' THEN
-                    substr(trim(raw_content), 3, instr(trim(raw_content) || ' (', ' (') - 3)
-                ELSE
-                    substr(trim(raw_content), 1, instr(trim(raw_content) || ' (', ' (') - 1)
-            END,
-            char(10), ''), char(13), '')
+        SELECT raw_content
         FROM cognitive_states
         WHERE pid=$claude_pid
             AND raw_content LIKE '%(esc to interrupt%'
         ORDER BY id DESC
-        LIMIT 1;" 2>/dev/null)
+        LIMIT 1;" 2>/dev/null | grep -oE ".*\(esc to interrupt" | head -1 | sed 's/(esc to interrupt.*$//' | sed 's/^[[:space:]]*\*[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
 
     if [ -n "$cognitive_state" ]; then
         echo "$cognitive_state"
